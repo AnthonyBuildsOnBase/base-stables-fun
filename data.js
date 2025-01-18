@@ -11,17 +11,17 @@ const CURRENCY_DATA = [
 ];
 
 const COUNTRY_CODES = {
-    "Mexico": "MEX",
-    "Argentina": "ARG", 
-    "South Africa": "ZAF",
-    "Indonesia": "IDN",
-    "Bolivia": "BOL",
-    "Nigeria": "NGA",
-    "US": "USA",
-    "Turkey": "TUR"
+    "Mexico": "484",
+    "Argentina": "032",
+    "South Africa": "710",
+    "Indonesia": "360",
+    "Bolivia": "068",
+    "Nigeria": "566",
+    "US": "840",
+    "Turkey": "792"
 };
 
 const EUR_COUNTRIES = [
-    "AUT", "BEL", "CYP", "EST", "FIN", "FRA", "DEU", "GRC", "IRL", "ITA",
-    "LVA", "LTU", "LUX", "MLT", "NLD", "PRT", "SVK", "SVN", "ESP"
+    "040", "056", "196", "233", "246", "250", "276", "300", "372", "380",
+    "428", "440", "442", "470", "528", "620", "703", "705", "724"
 ];
