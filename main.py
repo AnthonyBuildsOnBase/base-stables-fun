@@ -84,25 +84,44 @@ st.markdown("""
 st.markdown('<h1 class="title">Base International Stablecoins</h1>', unsafe_allow_html=True)
 
 def create_globe():
-    # Prepare data for active countries
-    active_countries = set()
+    # Prepare data for active countries and hover text
+    active_countries = []
+    hover_text = []
+    z_values = []
+
     for currency in CURRENCY_DATA:
         if currency['country'] == 'Europe':
-            active_countries.update(EUR_COUNTRIES)
+            for country_code in EUR_COUNTRIES:
+                active_countries.append(country_code)
+                hover_text.append(
+                    f"Region: Europe<br>"
+                    f"Currency: EUR<br>"
+                    f"Digital: {currency['digital']}<br>"
+                    f"Provider: {currency['provider']}"
+                )
+                z_values.append(1)
         else:
             if currency['country'] in COUNTRY_CODES:
-                active_countries.add(COUNTRY_CODES[currency['country']])
+                active_countries.append(COUNTRY_CODES[currency['country']])
+                hover_text.append(
+                    f"Country: {currency['country']}<br>"
+                    f"Currency: {currency['code']}<br>"
+                    f"Digital: {currency['digital']}<br>"
+                    f"Provider: {currency['provider']}"
+                )
+                z_values.append(1)
 
     # Create initial figure
     fig = go.Figure()
 
-    # Add choropleth trace with updated colors
+    # Add choropleth trace with updated colors and hover text
     fig.add_trace(go.Choropleth(
-        locations=list(active_countries),
-        z=[1] * len(active_countries),
+        locations=active_countries,
+        z=z_values,
+        text=hover_text,
+        hoverinfo='text',
         colorscale=[[0, '#1E1E1E'], [1, '#0083FF']],
         showscale=False,
-        hoverinfo='location'
     ))
 
     # Update layout for globe projection
@@ -131,32 +150,27 @@ def create_globe():
 
     return fig
 
-# Create two columns with adjusted ratios for better layout
-col1, col2 = st.columns([1.2, 0.8])
+# Display the globe
+globe_fig = create_globe()
+st.plotly_chart(globe_fig, use_container_width=True, config={
+    'displayModeBar': False,
+    'scrollZoom': False,
+    'showTips': False,
+    'frameMargins': 0,
+    'displaylogo': False,
+})
 
-# Display the globe in the left column
-with col1:
-    globe_fig = create_globe()
-    st.plotly_chart(globe_fig, use_container_width=True, config={
-        'displayModeBar': False,
-        'scrollZoom': False,
-        'showTips': False,
-        'frameMargins': 0,
-        'displaylogo': False,
-    })
-
-# Create and display the currency table in the right column
-with col2:
-    st.markdown("<div class='table-container'>", unsafe_allow_html=True)
-    currency_df = pd.DataFrame(CURRENCY_DATA)
-    styled_table = currency_df[['country', 'code', 'digital', 'provider']].rename(columns={
-        'country': 'Country',
-        'code': 'Currency',
-        'digital': 'Digital',
-        'provider': 'Provider'
-    }).to_html(classes='styled-table', index=False, escape=False)
-    st.markdown(styled_table, unsafe_allow_html=True)
-    st.markdown("</div>", unsafe_allow_html=True)
+# Create and display the currency table below the globe
+st.markdown("<div class='table-container'>", unsafe_allow_html=True)
+currency_df = pd.DataFrame(CURRENCY_DATA)
+styled_table = currency_df[['country', 'code', 'digital', 'provider']].rename(columns={
+    'country': 'Country',
+    'code': 'Currency',
+    'digital': 'Digital',
+    'provider': 'Provider'
+}).to_html(classes='styled-table', index=False, escape=False)
+st.markdown(styled_table, unsafe_allow_html=True)
+st.markdown("</div>", unsafe_allow_html=True)
 
 # Add JavaScript for globe rotation with smooth easing effects
 st.markdown("""
