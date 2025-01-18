@@ -9,4 +9,5 @@ dependencies = [
     "plotly>=5.24.1",
     "streamlit-folium>=0.24.0",
     "streamlit>=1.41.1",
+    "twilio>=9.4.3",
 ]
