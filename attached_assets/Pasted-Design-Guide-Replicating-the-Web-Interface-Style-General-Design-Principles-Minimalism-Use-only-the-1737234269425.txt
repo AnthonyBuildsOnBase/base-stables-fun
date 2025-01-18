@@ -1,0 +1,58 @@
+Design Guide: Replicating the Web Interface Style
+General Design Principles
+Minimalism: Use only the essential elements. Keep the interface clean, with no unnecessary distractions.
+Dark Mode: Use a dark background (#000000 or close) with high-contrast light elements (white or very light gray, #FFFFFF or #F1F1F1).
+Modern Aesthetic: Utilize sleek, flat, or slightly rounded UI elements to convey a contemporary and polished look.
+Layout and Structure
+Grid-based Design:
+Use a visible grid for a structured, tech-inspired look.
+Align all elements to the grid to maintain visual consistency.
+Two-panel Layout:
+Left Panel: Tools and customization options (e.g., sliders, buttons, dropdowns).
+Right Panel: Interactive 3D product visualization and metadata.
+Typography
+Font Style: Use a modern sans-serif font such as Roboto, Open Sans, or Inter.
+Font Size:
+Large, bold headers for titles (e.g., "SELF").
+Medium-weight text for subheaders and instructions.
+Small, unobtrusive text for additional information or metadata.
+Font Colors:
+White (#FFFFFF) for primary text on a dark background.
+Gray tones (#A0A0A0 to #F0F0F0) for secondary text.
+Color Palette
+Background:
+Primary: Solid black (#000000).
+Secondary Elements: Subtle gridlines in dark gray (#1E1E1E).
+Highlight Colors:
+Use white (#FFFFFF) and subtle accent colors (e.g., red, green, blue, light gray) sparingly.
+Interactive Elements:
+Sliders, toggles, and buttons should have a hover/active state with subtle color shifts (e.g., from #333333 to #555555).
+Interactive Elements
+3D Visualization:
+Place the 3D object prominently in the center, allowing for full interaction (e.g., rotate, zoom).
+Include icons for perspective control (e.g., cube icons for different angles).
+Customization Panel:
+Sliders: Use sleek, modern sliders with clearly defined endpoints.
+Dropdowns/Selectors: Use flat, rounded-corner dropdowns.
+Buttons: Minimalist buttons with hover states (e.g., slight increase in brightness or outline).
+Content Hierarchy
+Main Focus:
+The 3D product visualization should be the most prominent element.
+Supporting Information:
+Show metadata (e.g., dimensions, material) in a clean, unobtrusive card or sidebar on the right.
+Call-to-Action (CTA):
+Position the “Sign in to save” or similar CTA in a secondary yet noticeable location.
+Use a simple button with a hover effect.
+Icons and Visual Elements
+Icons:
+Use modern, flat icons with a geometric design.
+Consistent line thickness across all icons.
+Product Outline:
+Use subtle overlays (e.g., dashed or solid outlines) to enhance the product shape when interacted with.
+Sliders:
+Include radius-based and linear sliders that adapt to the theme (e.g., dark gray base with white active state).
+Animations and Transitions
+Subtle Transitions:
+Use smooth transitions (200ms-300ms) for hover effects, element visibility, or updates.
+Interactive Feedback:
+Provide visual feedback for interactions (e.g., button clicks, slider adjustments) with slight animations.

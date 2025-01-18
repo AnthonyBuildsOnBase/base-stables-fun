@@ -10,59 +10,84 @@ st.set_page_config(
     layout="wide"
 )
 
-# Custom CSS for dark theme
+# Custom CSS for dark theme following design guide
 st.markdown("""
     <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
     .main {
-        padding: 0rem 1rem;
+        background-color: #000000;
+        font-family: 'Inter', sans-serif;
+        padding: 0;
     }
     .stApp {
-        background-color: black;
+        background-color: #000000;
     }
     [data-testid="stHeader"] {
-        background-color: black;
+        background-color: #000000;
     }
     .css-1dp5vir {
-        background-color: black;
+        background-color: #000000;
     }
     .css-18e3th9 {
-        padding-top: 1rem;
+        padding: 2rem 1rem;
     }
     .table-container {
-        background: #1f1f1f;
-        border-radius: 10px;
-        padding: 20px;
+        background: #1E1E1E;
+        border-radius: 12px;
+        padding: 24px;
         margin-top: 20px;
+        transition: all 0.2s ease-in-out;
+    }
+    .table-container:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
     .styled-table {
         width: 100%;
         border-collapse: separate;
         border-spacing: 0 8px;
         margin-top: 20px;
+        font-family: 'Inter', sans-serif;
     }
     .styled-table th {
-        background-color: #2d2d2d;
-        color: #0083FF !important;
-        padding: 12px;
+        background-color: #1E1E1E;
+        color: #FFFFFF !important;
+        padding: 16px;
         text-align: left;
         font-weight: 600;
+        font-size: 14px;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
     }
     .styled-table td {
-        background-color: #2d2d2d;
-        color: white !important;
-        padding: 12px;
+        background-color: #2D2D2D;
+        color: #F1F1F1 !important;
+        padding: 16px;
+        font-size: 14px;
+        transition: all 0.2s ease-in-out;
+    }
+    .styled-table tr:hover td {
+        background-color: #333333;
     }
     .styled-table tr td:first-child {
-        border-radius: 6px 0 0 6px;
+        border-radius: 8px 0 0 8px;
     }
     .styled-table tr td:last-child {
-        border-radius: 0 6px 6px 0;
+        border-radius: 0 8px 8px 0;
+    }
+    .title {
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 32px;
+        color: #FFFFFF;
+        margin-bottom: 2rem;
+        text-align: center;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# Title
-st.markdown("<h1 style='text-align: center; color: white;'>Base International Stablecoins</h1>", unsafe_allow_html=True)
+# Title with updated styling
+st.markdown('<h1 class="title">Base International Stablecoins</h1>', unsafe_allow_html=True)
 
 def create_globe():
     # Prepare data for active countries
@@ -77,11 +102,11 @@ def create_globe():
     # Create initial figure
     fig = go.Figure()
 
-    # Add choropleth trace
+    # Add choropleth trace with updated colors
     fig.add_trace(go.Choropleth(
         locations=list(active_countries),
         z=[1] * len(active_countries),
-        colorscale=[[0, '#1f1f1f'], [1, '#0083FF']],
+        colorscale=[[0, '#1E1E1E'], [1, '#0083FF']],
         showscale=False,
         hoverinfo='location'
     ))
@@ -90,21 +115,21 @@ def create_globe():
     fig.update_geos(
         projection_type='orthographic',
         showcoastlines=True,
-        coastlinecolor='white',
+        coastlinecolor='#FFFFFF',
         showland=True,
-        landcolor='#1f1f1f',
+        landcolor='#1E1E1E',
         showocean=True,
-        oceancolor='black',
+        oceancolor='#000000',
         showframe=False,
-        bgcolor='black'
+        bgcolor='#000000'
     )
 
     # Update layout
     fig.update_layout(
-        paper_bgcolor='black',
-        plot_bgcolor='black',
+        paper_bgcolor='#000000',
+        plot_bgcolor='#000000',
         margin=dict(l=0, r=0, t=0, b=0),
-        height=400,
+        height=500,  # Increased height for better visibility
         geo=dict(
             projection_rotation=dict(lon=0, lat=30, roll=0)
         )
@@ -112,8 +137,8 @@ def create_globe():
 
     return fig
 
-# Create two columns for layout
-col1, col2 = st.columns([1, 1])
+# Create two columns with adjusted ratios for better layout
+col1, col2 = st.columns([1.2, 0.8])
 
 # Display the globe in the left column
 with col1:
@@ -132,14 +157,14 @@ with col2:
     currency_df = pd.DataFrame(CURRENCY_DATA)
     styled_table = currency_df[['country', 'code', 'digital', 'provider']].rename(columns={
         'country': 'Country',
-        'code': 'Currency Code',
-        'digital': 'Digital Currency',
+        'code': 'Currency',
+        'digital': 'Digital',
         'provider': 'Provider'
     }).to_html(classes='styled-table', index=False, escape=False)
     st.markdown(styled_table, unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
-# Add JavaScript for globe rotation
+# Add JavaScript for globe rotation with smoother animation
 st.markdown("""
     <script>
         function waitForPlotly() {
@@ -160,7 +185,7 @@ st.markdown("""
             function rotate() {
                 if (!isRotating) return;
 
-                lon = (lon + 1) % 360;
+                lon = (lon + 0.5) % 360;  // Slower rotation speed
                 Plotly.relayout(plot, {
                     'geo.projection.rotation.lon': lon
                 });
@@ -171,7 +196,7 @@ st.markdown("""
             // Start rotation
             rotate();
 
-            // Handle hover events
+            // Handle hover events with smooth transitions
             plot.on('plotly_hover', () => {
                 isRotating = false;
             });
