@@ -57,7 +57,25 @@ const COUNTRY_CODES = {
     "US": "840"
 };
 
+// Only European Union member states
 const EUR_COUNTRIES = [
-    "040", "056", "196", "233", "246", "250", "276", "300", "372", "380",
-    "428", "440", "442", "470", "528", "620", "703", "705", "724"
+    "040", // Austria
+    "056", // Belgium
+    "196", // Cyprus
+    "233", // Estonia
+    "246", // Finland
+    "250", // France
+    "276", // Germany
+    "300", // Greece
+    "372", // Ireland
+    "380", // Italy
+    "428", // Latvia
+    "440", // Lithuania
+    "442", // Luxembourg
+    "470", // Malta
+    "528", // Netherlands
+    "620", // Portugal
+    "703", // Slovakia
+    "705", // Slovenia
+    "724"  // Spain
 ];
