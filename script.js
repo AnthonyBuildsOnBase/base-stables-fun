@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const height = document.querySelector('.globe-container').clientHeight;
     const isMobile = window.innerWidth <= 768;
     const sensitivity = isMobile ? 150 : 75; // Higher sensitivity (slower drag) on mobile
-    const rotationSpeed = isMobile ? 0.05 : 0.1; // Slower rotation on mobile
+    const rotationSpeed = 0.1; // Same rotation speed for both mobile and web
 
     const svg = d3.select('#globe')
         .attr('width', width)
