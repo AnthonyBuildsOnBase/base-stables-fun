@@ -5,7 +5,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const height = document.querySelector('.globe-container').clientHeight;
     const isMobile = window.innerWidth <= 768;
     const sensitivity = isMobile ? 150 : 75; // Higher sensitivity (slower drag) on mobile
-    const rotationSpeed = 0.1; // Same rotation speed for both mobile and web
+    const rotationSpeed = 0.1; // Base rotation speed
+    const mobileRotationMultiplier = isMobile ? 2 : 1; // Double speed on mobile
 
     const svg = d3.select('#globe')
         .attr('width', width)
@@ -150,7 +151,7 @@ document.addEventListener('DOMContentLoaded', function() {
             function rotate() {
                 if (!isHovered) {
                     const rotation = projection.rotate();
-                    projection.rotate([rotation[0] + rotationSpeed, rotation[1]]);
+                    projection.rotate([rotation[0] + (rotationSpeed * mobileRotationMultiplier), rotation[1]]);
                     svg.selectAll('path').attr('d', path);
                 }
                 requestAnimationFrame(rotate);

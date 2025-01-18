@@ -22,6 +22,15 @@ body {
     padding-top: 2rem;
 }
 
+.subtitle {
+    font-weight: 400;
+    font-size: 16px;
+    color: #666666;
+    margin: 0.5rem 0 1.5rem 2rem; /* Match title's left margin */
+    text-align: left;
+    max-width: 800px; /* Limit width for better readability */
+}
+
 .globe-container {
     margin-top: 2rem;
     width: 100%;
@@ -121,23 +130,6 @@ body {
 .tooltip p {
     margin: 3px 0;
     color: #ccc;
-}
-
-.subtitle {
-    font-weight: 400;
-    font-size: 16px;
-    color: #666666;
-    margin: 0.5rem 0 1.5rem 2rem;
-    text-align: left;
-}
-
-.subtitle a {
-    color: #0052FF;
-    text-decoration: none;
-}
-
-.subtitle a:hover {
-    text-decoration: underline;
 }
 
 .footer {
