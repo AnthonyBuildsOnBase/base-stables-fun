@@ -26,21 +26,6 @@ document.addEventListener('DOMContentLoaded', function() {
         .attr('cy', height / 2)
         .attr('r', initialScale);
 
-    // Create a mapping of ISO country codes to currency codes
-    const countryToCurrency = {};
-    CURRENCY_DATA.forEach(currency => {
-        if (currency.country === 'Europe') {
-            EUR_COUNTRIES.forEach(countryCode => {
-                countryToCurrency[countryCode] = currency.code;
-            });
-        } else {
-            const countryCode = COUNTRY_CODES[currency.country];
-            if (countryCode) {
-                countryToCurrency[countryCode] = currency.code;
-            }
-        }
-    });
-
     // Load world map data and create the globe
     d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
         .then(function(world) {
@@ -51,12 +36,25 @@ document.addEventListener('DOMContentLoaded', function() {
                 .enter().append('path')
                 .attr('d', path)
                 .attr('fill', d => {
-                    return countryToCurrency[d.id] ? '#2979ff' : '#1a1a1a';
+                    // Check if it's a Euro country
+                    if (EUR_COUNTRIES.includes(d.id)) {
+                        return '#2979ff'; // Euro countries in blue
+                    }
+
+                    // Check other countries
+                    const matchingCurrency = CURRENCY_DATA.find(currency => {
+                        const countryCode = COUNTRY_CODES[currency.country];
+                        return countryCode === d.id;
+                    });
+
+                    return matchingCurrency ? '#2979ff' : '#1a1a1a';
                 })
                 .attr('stroke', '#333')
                 .attr('stroke-width', '0.3')
                 .attr('opacity', d => {
-                    return countryToCurrency[d.id] ? 1 : 0.7;
+                    return (EUR_COUNTRIES.includes(d.id) || 
+                           CURRENCY_DATA.some(currency => COUNTRY_CODES[currency.country] === d.id)) 
+                           ? 1 : 0.7;
                 });
 
             // Rotation behavior

@@ -12,13 +12,13 @@ const CURRENCY_DATA = [
 
 const COUNTRY_CODES = {
     "Mexico": "MEX",
-    "Argentina": "ARG",
+    "Argentina": "ARG", 
     "South Africa": "ZAF",
     "Indonesia": "IDN",
     "Bolivia": "BOL",
     "Nigeria": "NGA",
     "US": "USA",
-    "Turkey": "TUR",
+    "Turkey": "TUR"
 };
 
 const EUR_COUNTRIES = [
