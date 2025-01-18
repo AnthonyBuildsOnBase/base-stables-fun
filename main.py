@@ -191,7 +191,7 @@ st.markdown("""
             let isRotating = true;
             let lastTime = 0;
             const rotationSpeed = 0.2; 
-            
+
             function easeInOutCubic(t) {
                 return t < 0.5
                     ? 4 * t * t * t
