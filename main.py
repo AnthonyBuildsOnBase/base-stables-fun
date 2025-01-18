@@ -1,7 +1,7 @@
 import streamlit as st
 import plotly.express as px
 import pandas as pd
-import plotly.graph_objects as go #Added import for go.Frame
+import plotly.graph_objects as go
 from currency_data import CURRENCY_DATA, COUNTRY_CODES, EUR_COUNTRIES
 
 # Page configuration
@@ -77,7 +77,7 @@ def create_globe():
 
     # Create frames for rotation animation
     frames = []
-    for rotation in range(0, 360, 6):  # 6-degree steps for smoother rotation
+    for rotation in range(0, 360, 3):  # 3-degree steps for smoother rotation
         frames.append(go.Frame(
             layout=dict(
                 geo=dict(
@@ -101,28 +101,6 @@ def create_globe():
         margin=dict(l=0, r=0, t=0, b=0),
         coloraxis_showscale=False,
         height=600,
-        updatemenus=[{
-            'type': 'buttons',
-            'showactive': False,
-            'buttons': [{
-                'method': 'animate',
-                'args': [None, {
-                    'frame': {'duration': 50, 'redraw': True},
-                    'fromcurrent': True,
-                    'transition': {'duration': 0},
-                    'mode': 'immediate',
-                }],
-                'label': '🌍 Rotate Globe'
-            }],
-            'x': 0.1,
-            'y': 0,
-            'xanchor': 'right',
-            'yanchor': 'top'
-        }]
-    )
-
-    # Add autorotation using JavaScript
-    fig.update_layout(
         autosize=True,
         hovermode='closest',
     )
@@ -130,32 +108,54 @@ def create_globe():
     # Add custom JavaScript for continuous rotation and hover interaction
     js_code = """
     <script>
-        const fig = document.querySelector('#chart');
-        let isRotating = true;
-        let animationId;
+        function waitForElement(selector) {
+            return new Promise(resolve => {
+                if (document.querySelector(selector)) {
+                    return resolve(document.querySelector(selector));
+                }
 
-        function rotateGlobe() {
-            if (isRotating) {
-                Plotly.animate('chart', null, {
-                    frame: {duration: 50, redraw: true},
-                    transition: {duration: 0},
-                    mode: 'immediate'
+                const observer = new MutationObserver(mutations => {
+                    if (document.querySelector(selector)) {
+                        observer.disconnect();
+                        resolve(document.querySelector(selector));
+                    }
                 });
-                animationId = requestAnimationFrame(rotateGlobe);
-            }
+
+                observer.observe(document.body, {
+                    childList: true,
+                    subtree: true
+                });
+            });
         }
 
-        fig.on('plotly_hover', function() {
-            isRotating = false;
-            cancelAnimationFrame(animationId);
-        });
+        waitForElement('#chart').then(fig => {
+            let isRotating = true;
+            let animationId;
 
-        fig.on('plotly_unhover', function() {
-            isRotating = true;
+            function rotateGlobe() {
+                if (isRotating) {
+                    Plotly.animate('chart', null, {
+                        frame: {duration: 100, redraw: true},  // Slower rotation
+                        transition: {duration: 0},
+                        mode: 'immediate'
+                    });
+                    animationId = requestAnimationFrame(rotateGlobe);
+                }
+            }
+
+            fig.on('plotly_hover', function() {
+                isRotating = false;
+                cancelAnimationFrame(animationId);
+            });
+
+            fig.on('plotly_unhover', function() {
+                isRotating = true;
+                rotateGlobe();
+            });
+
+            // Start rotation immediately
             rotateGlobe();
         });
-
-        rotateGlobe();
     </script>
     """
 
