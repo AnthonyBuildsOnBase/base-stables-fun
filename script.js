@@ -42,6 +42,7 @@ function createGlobe() {
     }];
 
     const layout = {
+        dragmode: 'orbit',
         geo: {
             projection: {
                 type: 'orthographic',
@@ -68,13 +69,20 @@ function createGlobe() {
 
     const config = {
         displayModeBar: false,
-        scrollZoom: false,
+        scrollZoom: true,
         showTips: false,
         frameMargins: 0,
-        displaylogo: false
+        displaylogo: false,
+        responsive: true
     };
 
     Plotly.newPlot('globe', data, layout, config);
+
+    // Add event listeners for drag interactions
+    const globeElement = document.getElementById('globe');
+    globeElement.on('plotly_relayout', () => {
+        isRotating = false;
+    });
 }
 
 // Function to populate the currency table
@@ -97,7 +105,8 @@ function initializeGlobeRotation() {
     let lon = 0;
     let isRotating = true;
     let lastTime = 0;
-    const rotationSpeed = 0.2;
+    const rotationSpeed = 0.5; // Increased rotation speed
+    let isDragging = false;
 
     function easeInOutCubic(t) {
         return t < 0.5
@@ -110,7 +119,7 @@ function initializeGlobeRotation() {
         const deltaTime = (currentTime - lastTime) / 1000;
         lastTime = currentTime;
 
-        if (!isRotating) return;
+        if (!isRotating || isDragging) return;
 
         const easedIncrement = easeInOutCubic(deltaTime) * rotationSpeed * 60;
         lon = (lon + easedIncrement) % 360;
@@ -125,34 +134,33 @@ function initializeGlobeRotation() {
     requestAnimationFrame(animate);
 
     const globeElement = document.getElementById('globe');
-    let transitionTimeout;
 
-    globeElement.addEventListener('mouseover', () => {
-        clearTimeout(transitionTimeout);
-        const slowDown = () => {
-            rotationSpeed *= 0.95;
-            if (rotationSpeed > 0.01) {
-                requestAnimationFrame(slowDown);
-            } else {
-                isRotating = false;
-            }
-        };
-        slowDown();
+    // Handle mouse interactions
+    globeElement.addEventListener('mousedown', () => {
+        isDragging = true;
+        isRotating = false;
     });
 
-    globeElement.addEventListener('mouseout', () => {
-        clearTimeout(transitionTimeout);
-        isRotating = true;
-        const speedUp = () => {
-            rotationSpeed = Math.min(rotationSpeed * 1.05, 0.2);
-            if (rotationSpeed < 0.2) {
-                requestAnimationFrame(speedUp);
+    globeElement.addEventListener('mouseup', () => {
+        isDragging = false;
+        // Add a small delay before resuming rotation
+        setTimeout(() => {
+            if (!isDragging) {
+                isRotating = true;
+                requestAnimationFrame(animate);
             }
-        };
-        transitionTimeout = setTimeout(() => {
-            speedUp();
-            requestAnimationFrame(animate);
-        }, 100);
+        }, 1000);
+    });
+
+    globeElement.addEventListener('mouseleave', () => {
+        isDragging = false;
+        // Resume rotation after mouse leaves
+        setTimeout(() => {
+            if (!isDragging) {
+                isRotating = true;
+                requestAnimationFrame(animate);
+            }
+        }, 500);
     });
 }
 
