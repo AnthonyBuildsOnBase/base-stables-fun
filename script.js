@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 .attr('fill', d => {
                     const highlight = shouldHighlightCountry(d.id);
                     console.log('Country:', d.id, 'Highlighted:', highlight);
-                    return highlight ? '#2979ff' : '#1a1a1a';
+                    return highlight ? '#0052FF' : '#1a1a1a';
                 })
                 .attr('stroke', '#333')
                 .attr('stroke-width', '0.3')
@@ -78,8 +78,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 .on('drag', function(event) {
                     if (m0) {
                         const m1 = [event.x, event.y];
-                        const o1 = [o0[0] + (m1[0] - m0[0]) / sensitivity, 
-                                  o0[1] + (m1[1] - m0[1]) / sensitivity];
+                        const o1 = [o0[0] + (m1[0] - m0[0]) / sensitivity,
+                                      o0[1] + (m1[1] - m0[1]) / sensitivity];
                         projection.rotate([-o1[0], -o1[1]]);
                         svg.selectAll('path').attr('d', path);
                     }
