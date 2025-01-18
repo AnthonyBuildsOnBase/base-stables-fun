@@ -11,6 +11,8 @@
   "description": "",
   "dependencies": {
     "express": "^4.21.2",
-    "path": "^0.12.7"
+    "globe.gl": "^2.38.0",
+    "path": "^0.12.7",
+    "three": "^0.172.0"
   }
 }

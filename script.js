@@ -1,93 +1,105 @@
+// Import Globe.gl
+import Globe from 'globe.gl';
+
 // Function to create and update the globe
 function createGlobe() {
-    // Prepare data for active countries and hover text
-    const activeCountries = [];
-    const hoverText = [];
-    const zValues = [];
+    const globeElement = document.getElementById('globe');
+
+    // Initialize globe
+    const globe = Globe()
+        .globeImageUrl('//unpkg.com/three-globe/example/img/earth-dark.jpg')
+        .backgroundColor('#000000')
+        .width(globeElement.clientWidth)
+        .height(500);
+
+    // Add it to the DOM
+    globe(globeElement);
+
+    // Prepare data for countries
+    const countryData = [];
 
     CURRENCY_DATA.forEach(currency => {
         if (currency.country === 'Europe') {
             EUR_COUNTRIES.forEach(countryCode => {
-                activeCountries.push(countryCode);
-                hoverText.push(
-                    `Region: Europe<br>` +
-                    `Currency: EUR<br>` +
-                    `Digital: ${currency.digital}<br>` +
-                    `Provider: ${currency.provider}`
-                );
-                zValues.push(1);
+                countryData.push({
+                    code: countryCode,
+                    color: '#0052FF',
+                    info: {
+                        region: 'Europe',
+                        currency: 'EUR',
+                        digital: currency.digital,
+                        provider: currency.provider
+                    }
+                });
             });
         } else {
             if (COUNTRY_CODES[currency.country]) {
-                activeCountries.push(COUNTRY_CODES[currency.country]);
-                hoverText.push(
-                    `Country: ${currency.country}<br>` +
-                    `Currency: ${currency.code}<br>` +
-                    `Digital: ${currency.digital}<br>` +
-                    `Provider: ${currency.provider}`
-                );
-                zValues.push(1);
+                countryData.push({
+                    code: COUNTRY_CODES[currency.country],
+                    color: '#0052FF',
+                    info: {
+                        country: currency.country,
+                        currency: currency.code,
+                        digital: currency.digital,
+                        provider: currency.provider
+                    }
+                });
             }
         }
     });
 
-    const data = [{
-        type: 'choropleth',
-        locations: activeCountries,
-        z: zValues,
-        text: hoverText,
-        hoverinfo: 'text',
-        colorscale: [[0, '#1E1E1E'], [1, '#0052FF']],
-        showscale: false
-    }];
+    // Configure globe
+    globe
+        .hexPolygonsData(countryData)
+        .hexPolygonResolution(3)
+        .hexPolygonMargin(0.3)
+        .hexPolygonColor(d => d.color)
+        .hexPolygonLabel(d => {
+            const info = d.info;
+            return `
+                ${info.country ? `Country: ${info.country}` : `Region: ${info.region}`}<br>
+                Currency: ${info.currency}<br>
+                Digital: ${info.digital}<br>
+                Provider: ${info.provider}
+            `;
+        });
 
-    const layout = {
-        dragmode: 'orbit',
-        geo: {
-            projection: {
-                type: 'orthographic',
-                rotation: {
-                    lon: 0,
-                    lat: 30,
-                    roll: 0
-                }
-            },
-            showcoastlines: true,
-            coastlinecolor: '#FFFFFF',
-            showland: true,
-            landcolor: '#1E1E1E',
-            showocean: true,
-            oceancolor: '#000000',
-            showframe: false,
-            bgcolor: '#000000'
-        },
-        paper_bgcolor: '#000000',
-        plot_bgcolor: '#000000',
-        margin: { l: 0, r: 0, t: 0, b: 0 },
-        height: 500
-    };
+    // Auto-rotation
+    let isRotating = true;
+    const rotationSpeed = 0.3;
 
-    const config = {
-        displayModeBar: false,
-        scrollZoom: true,
-        showTips: false,
-        frameMargins: 0,
-        displaylogo: false,
-        responsive: true
-    };
+    (function animate() {
+        if (isRotating) {
+            globe.rotation({
+                lat: globe.rotation().lat,
+                lng: (globe.rotation().lng + rotationSpeed) % 360
+            });
+        }
+        requestAnimationFrame(animate);
+    })();
 
-    Plotly.newPlot('globe', data, layout, config);
-
-    // Add event listeners for drag interactions
-    const globeElement = document.getElementById('globe');
-    globeElement.on('plotly_relayout', () => {
+    // Control rotation on interaction
+    globeElement.addEventListener('mousedown', () => {
         isRotating = false;
+    });
+
+    globeElement.addEventListener('mouseup', () => {
+        setTimeout(() => {
+            isRotating = true;
+        }, 1500);
+    });
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+        globe.width(globeElement.clientWidth);
     });
 }
 
 // Function to populate the currency table
 function populateTable() {
     const tableBody = document.getElementById('currency-table-body');
+    tableBody.innerHTML = ''; // Clear existing content
+
     CURRENCY_DATA.forEach(currency => {
         const row = document.createElement('tr');
         row.innerHTML = `
@@ -100,73 +112,8 @@ function populateTable() {
     });
 }
 
-// Initialize globe rotation
-function initializeGlobeRotation() {
-    let lon = 0;
-    let isRotating = true;
-    let lastTime = 0;
-    const rotationSpeed = 0.5; // Increased rotation speed
-    let isDragging = false;
-
-    function easeInOutCubic(t) {
-        return t < 0.5
-            ? 4 * t * t * t
-            : 1 - Math.pow(-2 * t + 2, 3) / 2;
-    }
-
-    function animate(currentTime) {
-        if (!lastTime) lastTime = currentTime;
-        const deltaTime = (currentTime - lastTime) / 1000;
-        lastTime = currentTime;
-
-        if (!isRotating || isDragging) return;
-
-        const easedIncrement = easeInOutCubic(deltaTime) * rotationSpeed * 60;
-        lon = (lon + easedIncrement) % 360;
-
-        Plotly.relayout('globe', {
-            'geo.projection.rotation.lon': lon
-        });
-
-        requestAnimationFrame(animate);
-    }
-
-    requestAnimationFrame(animate);
-
-    const globeElement = document.getElementById('globe');
-
-    // Handle mouse interactions
-    globeElement.addEventListener('mousedown', () => {
-        isDragging = true;
-        isRotating = false;
-    });
-
-    globeElement.addEventListener('mouseup', () => {
-        isDragging = false;
-        // Add a small delay before resuming rotation
-        setTimeout(() => {
-            if (!isDragging) {
-                isRotating = true;
-                requestAnimationFrame(animate);
-            }
-        }, 1000);
-    });
-
-    globeElement.addEventListener('mouseleave', () => {
-        isDragging = false;
-        // Resume rotation after mouse leaves
-        setTimeout(() => {
-            if (!isDragging) {
-                isRotating = true;
-                requestAnimationFrame(animate);
-            }
-        }, 500);
-    });
-}
-
 // Initialize everything when the page loads
 document.addEventListener('DOMContentLoaded', () => {
     createGlobe();
     populateTable();
-    initializeGlobeRotation();
 });
