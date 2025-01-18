@@ -120,7 +120,7 @@ def create_globe():
         z=z_values,
         text=hover_text,
         hoverinfo='text',
-        colorscale=[[0, '#1E1E1E'], [1, '#0083FF']],
+        colorscale=[[0, '#1E1E1E'], [1, '#0052FF']],  
         showscale=False,
     ))
 
@@ -142,7 +142,7 @@ def create_globe():
         paper_bgcolor='#000000',
         plot_bgcolor='#000000',
         margin=dict(l=0, r=0, t=0, b=0),
-        height=500,  # Increased height for better visibility
+        height=500,  
         geo=dict(
             projection_rotation=dict(lon=0, lat=30, roll=0)
         )
@@ -190,9 +190,8 @@ st.markdown("""
             let lon = 0;
             let isRotating = true;
             let lastTime = 0;
-            const rotationSpeed = 0.2; // Slower base rotation speed
-
-            // Easing function for smooth animation
+            const rotationSpeed = 0.2; 
+            
             function easeInOutCubic(t) {
                 return t < 0.5
                     ? 4 * t * t * t
@@ -201,12 +200,11 @@ st.markdown("""
 
             function animate(currentTime) {
                 if (!lastTime) lastTime = currentTime;
-                const deltaTime = (currentTime - lastTime) / 1000; // Convert to seconds
+                const deltaTime = (currentTime - lastTime) / 1000; 
                 lastTime = currentTime;
 
                 if (!isRotating) return;
 
-                // Apply easing to the rotation increment
                 const easedIncrement = easeInOutCubic(deltaTime) * rotationSpeed * 60;
                 lon = (lon + easedIncrement) % 360;
 
@@ -217,15 +215,12 @@ st.markdown("""
                 requestAnimationFrame(animate);
             }
 
-            // Start rotation with smooth animation
             requestAnimationFrame(animate);
 
-            // Smooth transition for hover interactions
             let transitionTimeout;
 
             plot.on('plotly_hover', () => {
                 clearTimeout(transitionTimeout);
-                // Gradually slow down rotation
                 const slowDown = () => {
                     rotationSpeed *= 0.95;
                     if (rotationSpeed > 0.01) {
@@ -240,7 +235,6 @@ st.markdown("""
             plot.on('plotly_unhover', () => {
                 clearTimeout(transitionTimeout);
                 isRotating = true;
-                // Gradually speed up rotation
                 const speedUp = () => {
                     rotationSpeed = Math.min(rotationSpeed * 1.05, 0.2);
                     if (rotationSpeed < 0.2) {
@@ -254,7 +248,6 @@ st.markdown("""
             });
         }
 
-        // Start when Plotly is ready
         waitForPlotly();
     </script>
 """, unsafe_allow_html=True)
