@@ -1,6 +1,7 @@
 import streamlit as st
-import plotly.graph_objects as go
+import folium
 import pandas as pd
+from streamlit_folium import folium_static
 from currency_data import CURRENCY_DATA, COUNTRY_CODES, EUR_COUNTRIES
 
 # Page configuration
@@ -58,6 +59,11 @@ st.markdown("""
     .styled-table tr td:last-child {
         border-radius: 0 6px 6px 0;
     }
+    .folium-map {
+        background-color: #1f1f1f;
+        border-radius: 10px;
+        padding: 10px;
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -65,102 +71,48 @@ st.markdown("""
 st.markdown("<h1 style='text-align: center; color: white;'>Base International Stablecoins</h1>", unsafe_allow_html=True)
 
 # Create the interactive globe
-def create_globe():
-    # Prepare data for active countries
-    active_countries = set()
+def create_map():
+    # Create a map centered at (0, 0) with a global view
+    m = folium.Map(
+        location=[20, 0],
+        zoom_start=2,
+        tiles='CartoDB dark_matter'
+    )
+
+    # Add markers for each country
     for currency in CURRENCY_DATA:
         if currency['country'] == 'Europe':
-            active_countries.update(EUR_COUNTRIES)
+            # Add markers for all European countries
+            for country_code in EUR_COUNTRIES:
+                #  Note:  This lacks actual lat/long coordinates.  Needs improvement.
+                folium.CircleMarker(
+                    location=[0, 0], 
+                    radius=8,
+                    color='#0083FF',
+                    fill=True,
+                    popup=f"Currency: EUR<br>Digital: {currency['digital']}<br>Provider: {currency['provider']}"
+                ).add_to(m)
         else:
             if currency['country'] in COUNTRY_CODES:
-                active_countries.add(COUNTRY_CODES[currency['country']])
+                # Note: This lacks actual lat/long coordinates. Needs improvement.
+                folium.CircleMarker(
+                    location=[0, 0], 
+                    radius=8,
+                    color='#0083FF',
+                    fill=True,
+                    popup=f"Currency: {currency['code']}<br>Digital: {currency['digital']}<br>Provider: {currency['provider']}"
+                ).add_to(m)
 
-    # Create figure
-    fig = go.Figure()
-
-    # Add choropleth trace
-    fig.add_trace(go.Choropleth(
-        locations=list(active_countries),
-        z=[1] * len(active_countries),
-        colorscale=[[0, '#1f1f1f'], [1, '#0083FF']],
-        showscale=False,
-        hoverinfo='location'
-    ))
-
-    # Create frames for rotation animation
-    frames = []
-    for lon in range(0, 360, 2):  # 2-degree steps for smooth rotation
-        frames.append(go.Frame(
-            data=[go.Choropleth(
-                locations=list(active_countries),
-                z=[1] * len(active_countries),
-                colorscale=[[0, '#1f1f1f'], [1, '#0083FF']],
-                showscale=False,
-                hoverinfo='location'
-            )],
-            layout=go.Layout(
-                geo_projection_rotation_lon=lon,
-                geo_projection_rotation_lat=30,
-                geo_projection_rotation_roll=0
-            )
-        ))
-
-    fig.frames = frames
-
-    # Update layout for globe projection
-    fig.update_geos(
-        projection_type='orthographic',
-        showcoastlines=True,
-        coastlinecolor='white',
-        showland=True,
-        landcolor='#1f1f1f',
-        showocean=True,
-        oceancolor='black',
-        showframe=False,
-        bgcolor='black'
-    )
-
-    # Update layout with animation settings
-    fig.update_layout(
-        paper_bgcolor='black',
-        plot_bgcolor='black',
-        margin=dict(l=0, r=0, t=0, b=0),
-        height=400,  # Smaller height
-        updatemenus=[{
-            'type': 'buttons',
-            'showactive': False,
-            'y': 0,
-            'x': 0,
-            'xanchor': 'left',
-            'yanchor': 'bottom',
-            'buttons': [{
-                'label': '',
-                'method': 'animate',
-                'args': [None, {
-                    'frame': {'duration': 100, 'redraw': True},  # Slower rotation
-                    'fromcurrent': True,
-                    'transition': {'duration': 0},
-                    'mode': 'immediate'
-                }]
-            }]
-        }]
-    )
-
-    return fig
+    return m
 
 # Create two columns for layout
 col1, col2 = st.columns([1, 1])
 
-# Display the globe in the left column
+# Display the map in the left column
 with col1:
-    globe_fig = create_globe()
-    st.plotly_chart(globe_fig, use_container_width=True, config={
-        'displayModeBar': False,
-        'scrollZoom': False,
-        'showTips': False,
-        'frameMargins': 0,
-        'displaylogo': False,
-    })
+    st.markdown('<div class="folium-map">', unsafe_allow_html=True)
+    folium_static(create_map(), width=400)
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # Create and display the currency table in the right column
 with col2:
@@ -174,58 +126,3 @@ with col2:
     }).to_html(classes='styled-table', index=False, escape=False)
     st.markdown(styled_table, unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
-
-# Add JavaScript to start animation and handle hover
-st.markdown("""
-    <script>
-        function waitForPlotly() {
-            if (typeof Plotly === 'undefined') {
-                setTimeout(waitForPlotly, 100);
-                return;
-            }
-
-            const plot = document.querySelector('.js-plotly-plot');
-            if (!plot) {
-                setTimeout(waitForPlotly, 100);
-                return;
-            }
-
-            // Start animation automatically
-            Plotly.animate(plot, null, {
-                frame: {duration: 100, redraw: true},
-                fromcurrent: true,
-                mode: 'immediate',
-                transition: {duration: 0}
-            });
-
-            let isRotating = true;
-            let animationId;
-
-            function animate() {
-                if (isRotating) {
-                    Plotly.animate(plot, null, {
-                        frame: {duration: 100, redraw: true},
-                        fromcurrent: true,
-                        mode: 'immediate',
-                        transition: {duration: 0}
-                    });
-                }
-                animationId = requestAnimationFrame(animate);
-            }
-
-            plot.on('plotly_hover', () => {
-                isRotating = false;
-                cancelAnimationFrame(animationId);
-            });
-
-            plot.on('plotly_unhover', () => {
-                isRotating = true;
-                animate();
-            });
-
-            animate();
-        }
-
-        waitForPlotly();
-    </script>
-""", unsafe_allow_html=True)
