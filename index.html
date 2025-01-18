@@ -1,40 +1,50 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Base International Stablecoins</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
-    <!-- Load D3.js and related libraries -->
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="https://d3js.org/d3-geo.v3.min.js"></script>
-    <script src="https://d3js.org/topojson.v3.min.js"></script>
-    <script src="data.js"></script>
-</head>
-<body>
-    <div class="container">
-        <h1 class="title">Base International Stablecoins</h1>
-        <p class="subtitle">I've put together a list of international fiat-backed stablecoins currently live on Base. If I missed any, you think another stablecoin should launch on Base, or a country needs one, <a href="https://x.com/0xblockboy" target="_blank">message me</a></p>
-        <div class="globe-container">
-            <svg id="globe"></svg>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Base International Stablecoins</title>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="styles.css" />
+        <!-- Load D3.js and related libraries -->
+        <script src="https://d3js.org/d3.v7.min.js"></script>
+        <script src="https://d3js.org/d3-geo.v3.min.js"></script>
+        <script src="https://d3js.org/topojson.v3.min.js"></script>
+        <script src="data.js"></script>
+    </head>
+    <body>
+        <div class="container">
+            <h1 class="title">Base International Stablecoins</h1>
+            <p class="subtitle">
+                I put together this list of international fiat-backed
+                stablecoins currently live on Base. If I missed any, you think
+                another stablecoin should launch on Base, or a country needs
+                one,
+                <a href="https://x.com/0xblockboy" target="_blank">message me</a
+                >!
+            </p>
+            <div class="globe-container">
+                <svg id="globe"></svg>
+            </div>
+            <div class="table-container">
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>Region</th>
+                            <th>Currency</th>
+                            <th>Name</th>
+                            <th>Issuer</th>
+                        </tr>
+                    </thead>
+                    <tbody id="currency-table-body">
+                        <!-- Table content will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <div class="table-container">
-            <table class="styled-table">
-                <thead>
-                    <tr>
-                        <th>Region</th>
-                        <th>Currency</th>
-                        <th>Name</th>
-                        <th>Issuer</th>
-                    </tr>
-                </thead>
-                <tbody id="currency-table-body">
-                    <!-- Table content will be populated by JavaScript -->
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <script src="script.js"></script>
-</body>
+        <script src="script.js"></script>
+    </body>
 </html>

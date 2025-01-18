@@ -108,10 +108,9 @@ body {
 .subtitle {
     font-weight: 400;
     font-size: 16px;
-    color: #FFFFFF;
+    color: #666666;
     margin: 0.5rem 0 1.5rem 2rem;
     text-align: left;
-    opacity: 0.8;
 }
 
 .subtitle a {
