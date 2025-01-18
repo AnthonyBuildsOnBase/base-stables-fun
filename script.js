@@ -36,21 +36,32 @@ document.addEventListener('DOMContentLoaded', function() {
                 .enter().append('path')
                 .attr('d', path)
                 .attr('fill', d => {
-                    // Check if country is in our data
-                    const countryMatch = Object.entries(COUNTRY_CODES).find(([country, code]) => 
-                        code === d.id || (country === 'Europe' && EUR_COUNTRIES.includes(d.id))
-                    );
-                    // Use a brighter blue for countries with stablecoins
-                    return countryMatch ? '#2979ff' : '#1a1a1a';
+                    // Check for Eurozone countries
+                    const isEuroCountry = EUR_COUNTRIES.includes(d.id);
+                    if (isEuroCountry) {
+                        // If it's a Eurozone country and we have EUR in our data
+                        const hasEuro = CURRENCY_DATA.some(currency => currency.code === 'EUR');
+                        return hasEuro ? '#2979ff' : '#1a1a1a';
+                    }
+
+                    // Check for other countries in our currency data
+                    const currencyMatch = CURRENCY_DATA.some(currency => {
+                        const countryCode = COUNTRY_CODES[currency.country];
+                        return countryCode === d.id;
+                    });
+
+                    return currencyMatch ? '#2979ff' : '#1a1a1a';
                 })
                 .attr('stroke', '#333')
                 .attr('stroke-width', '0.3')
                 .attr('opacity', d => {
                     const isEuroCountry = EUR_COUNTRIES.includes(d.id);
-                    const countryMatch = Object.entries(COUNTRY_CODES).find(([country, code]) => 
-                        code === d.id || (country === 'Europe' && isEuroCountry)
-                    );
-                    return countryMatch ? 1 : 0.7;
+                    const currencyMatch = CURRENCY_DATA.some(currency => {
+                        if (isEuroCountry) return currency.code === 'EUR';
+                        const countryCode = COUNTRY_CODES[currency.country];
+                        return countryCode === d.id;
+                    });
+                    return currencyMatch ? 1 : 0.7;
                 });
 
             // Rotation behavior
