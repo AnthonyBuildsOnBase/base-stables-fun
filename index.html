@@ -6,11 +6,12 @@
     <title>Base International Stablecoins</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <!-- Load data first -->
     <script src="data.js"></script>
-    <!-- Load Three.js first -->
-    <script src="https://unpkg.com/three@0.137.0/build/three.min.js"></script>
-    <!-- Load Globe.gl with a specific version -->
-    <script src="https://unpkg.com/globe.gl@2.26.0/dist/globe.gl.min.js"></script>
+    <!-- Load Three.js from jsDelivr -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.129.0/build/three.min.js" onload="console.log('Three.js loaded')" onerror="console.error('Failed to load Three.js')"></script>
+    <!-- Load Globe.gl after Three.js -->
+    <script src="https://cdn.jsdelivr.net/npm/globe.gl@2.12.0/dist/globe.gl.min.js" onload="console.log('Globe.gl loaded')" onerror="console.error('Failed to load Globe.gl')"></script>
 </head>
 <body>
     <div class="container">
