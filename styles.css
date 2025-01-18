@@ -121,3 +121,12 @@ body {
 .subtitle a:hover {
     text-decoration: underline;
 }
+
+.footer {
+    font-weight: 400;
+    font-size: 14px;
+    color: #666666;
+    text-align: right;
+    padding: 20px;
+    margin-top: 2rem;
+}
