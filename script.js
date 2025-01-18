@@ -16,11 +16,13 @@ function createGlobe() {
 
         // Initialize globe with basic configuration
         const globe = Globe()
-            .globeImageUrl('//unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
+            .globeImageUrl('//unpkg.com/three-globe/example/img/earth-night.jpg')
             .backgroundColor('#000000')
             .width(globeElement.clientWidth)
             .height(500)
-            .showGraticules(false);
+            .showGraticules(true)
+            .atmosphereColor('#1a237e')
+            .atmosphereAltitude(0.25);
 
         // Add it to the DOM
         globe(globeElement);
@@ -75,34 +77,24 @@ function createGlobe() {
                 `;
             });
 
-        // Set initial rotation and camera position
-        globe.pointOfView({ lat: 0, lng: 0, altitude: 2.5 });
+        // Set initial camera position
+        globe.pointOfView({ lat: 39.6, lng: -98.5, altitude: 2.5 });
 
         // Auto-rotation
-        let isRotating = true;
-        const rotationSpeed = 0.5;
-        let currentLng = 0;
+        let frame;
+        (function animate() {
+            frame = requestAnimationFrame(animate);
+            globe.rotation({
+                lat: globe.rotation().lat,
+                lng: (globe.rotation().lng + 0.3) % 360,
+            });
+        })();
 
-        function animate() {
-            if (isRotating) {
-                currentLng = (currentLng + rotationSpeed) % 360;
-                globe.pointOfView({ lat: 0, lng: currentLng, altitude: 2.5 });
+        // Clean up on window unload
+        window.addEventListener('unload', () => {
+            if (frame) {
+                cancelAnimationFrame(frame);
             }
-            requestAnimationFrame(animate);
-        }
-
-        // Start animation
-        animate();
-
-        // Control rotation on interaction
-        globeElement.addEventListener('mousedown', () => {
-            isRotating = false;
-        });
-
-        globeElement.addEventListener('mouseup', () => {
-            setTimeout(() => {
-                isRotating = true;
-            }, 1500);
         });
 
         // Handle window resize
