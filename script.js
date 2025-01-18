@@ -1,5 +1,5 @@
 // Import Globe.gl
-import Globe from 'globe.gl';
+import Globe from '/node_modules/globe.gl/dist/globe.gl.min.js';
 
 // Function to create and update the globe
 function createGlobe() {
