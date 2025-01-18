@@ -164,7 +164,7 @@ with col2:
     st.markdown(styled_table, unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
-# Add JavaScript for globe rotation with smoother animation
+# Add JavaScript for globe rotation with smooth easing effects
 st.markdown("""
     <script>
         function waitForPlotly() {
@@ -181,29 +181,68 @@ st.markdown("""
 
             let lon = 0;
             let isRotating = true;
+            let lastTime = 0;
+            const rotationSpeed = 0.2; // Slower base rotation speed
 
-            function rotate() {
+            // Easing function for smooth animation
+            function easeInOutCubic(t) {
+                return t < 0.5
+                    ? 4 * t * t * t
+                    : 1 - Math.pow(-2 * t + 2, 3) / 2;
+            }
+
+            function animate(currentTime) {
+                if (!lastTime) lastTime = currentTime;
+                const deltaTime = (currentTime - lastTime) / 1000; // Convert to seconds
+                lastTime = currentTime;
+
                 if (!isRotating) return;
 
-                lon = (lon + 0.5) % 360;  // Slower rotation speed
+                // Apply easing to the rotation increment
+                const easedIncrement = easeInOutCubic(deltaTime) * rotationSpeed * 60;
+                lon = (lon + easedIncrement) % 360;
+
                 Plotly.relayout(plot, {
                     'geo.projection.rotation.lon': lon
                 });
 
-                requestAnimationFrame(rotate);
+                requestAnimationFrame(animate);
             }
 
-            // Start rotation
-            rotate();
+            // Start rotation with smooth animation
+            requestAnimationFrame(animate);
 
-            // Handle hover events with smooth transitions
+            // Smooth transition for hover interactions
+            let transitionTimeout;
+
             plot.on('plotly_hover', () => {
-                isRotating = false;
+                clearTimeout(transitionTimeout);
+                // Gradually slow down rotation
+                const slowDown = () => {
+                    rotationSpeed *= 0.95;
+                    if (rotationSpeed > 0.01) {
+                        requestAnimationFrame(slowDown);
+                    } else {
+                        isRotating = false;
+                    }
+                };
+                slowDown();
             });
 
             plot.on('plotly_unhover', () => {
+                clearTimeout(transitionTimeout);
                 isRotating = true;
-                rotate();
+                // Gradually speed up rotation
+                const speedUp = () => {
+                    rotationSpeed = Math.min(rotationSpeed * 1.05, 0.2);
+                    if (rotationSpeed < 0.2) {
+                        requestAnimationFrame(speedUp);
+                    }
+                };
+                transitionTimeout = setTimeout(() => {
+                    speedUp();
+                    requestAnimationFrame(animate);
+                }, 100);
             });
         }
 
