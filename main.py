@@ -137,7 +137,7 @@ def create_globe():
                 'label': '',
                 'method': 'animate',
                 'args': [None, {
-                    'frame': {'duration': 50, 'redraw': True},
+                    'frame': {'duration': 100, 'redraw': True},  # Slower rotation
                     'fromcurrent': True,
                     'transition': {'duration': 0},
                     'mode': 'immediate'
@@ -175,11 +175,57 @@ with col2:
     st.markdown(styled_table, unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
-# Add JavaScript to start animation automatically
+# Add JavaScript to start animation and handle hover
 st.markdown("""
     <script>
-        setTimeout(function() {
-            document.querySelector('button').click();
-        }, 1000);
+        function waitForPlotly() {
+            if (typeof Plotly === 'undefined') {
+                setTimeout(waitForPlotly, 100);
+                return;
+            }
+
+            const plot = document.querySelector('.js-plotly-plot');
+            if (!plot) {
+                setTimeout(waitForPlotly, 100);
+                return;
+            }
+
+            // Start animation automatically
+            Plotly.animate(plot, null, {
+                frame: {duration: 100, redraw: true},
+                fromcurrent: true,
+                mode: 'immediate',
+                transition: {duration: 0}
+            });
+
+            let isRotating = true;
+            let animationId;
+
+            function animate() {
+                if (isRotating) {
+                    Plotly.animate(plot, null, {
+                        frame: {duration: 100, redraw: true},
+                        fromcurrent: true,
+                        mode: 'immediate',
+                        transition: {duration: 0}
+                    });
+                }
+                animationId = requestAnimationFrame(animate);
+            }
+
+            plot.on('plotly_hover', () => {
+                isRotating = false;
+                cancelAnimationFrame(animationId);
+            });
+
+            plot.on('plotly_unhover', () => {
+                isRotating = true;
+                animate();
+            });
+
+            animate();
+        }
+
+        waitForPlotly();
     </script>
 """, unsafe_allow_html=True)
