@@ -21,6 +21,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const initialScale = projection.scale();
     const path = d3.geoPath().projection(projection);
 
+    let isHovered = false;
+
     // Add background circle
     svg.append('circle')
         .attr('fill', '#111')
@@ -28,9 +30,9 @@ document.addEventListener('DOMContentLoaded', function() {
         .attr('stroke-width', '0.2')
         .attr('cx', width / 2)
         .attr('cy', height / 2)
-        .attr('r', initialScale);
-
-    let isHovered = false;
+        .attr('r', initialScale)
+        .on('mouseenter', () => { isHovered = true; })
+        .on('mouseleave', () => { isHovered = false; });
 
     // Function to determine if a country should be highlighted
     function shouldHighlightCountry(countryId) {
@@ -99,6 +101,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 .attr('stroke', '#333')
                 .attr('stroke-width', '0.3')
                 .attr('opacity', d => shouldHighlightCountry(d.id) ? 1 : 0.7)
+                .on('mouseenter', () => { isHovered = true; })
+                .on('mouseleave', () => { isHovered = false; })
                 .on('mouseover', function(event, d) {
                     const stablecoinInfo = getStablecoinInfo(d.id);
                     if (stablecoinInfo.length > 0) {
@@ -120,10 +124,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 .on('mouseout', function() {
                     tooltip.style('display', 'none');
                 });
-
-            // Add hover detection for the entire globe
-            svg.on('mouseenter', () => { isHovered = true; })
-               .on('mouseleave', () => { isHovered = false; });
 
             // Rotation behavior
             let m0, o0;
