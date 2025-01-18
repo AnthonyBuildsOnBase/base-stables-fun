@@ -26,6 +26,21 @@ document.addEventListener('DOMContentLoaded', function() {
         .attr('cy', height / 2)
         .attr('r', initialScale);
 
+    // Create a mapping of ISO country codes to currency codes
+    const countryToCurrency = {};
+    CURRENCY_DATA.forEach(currency => {
+        if (currency.country === 'Europe') {
+            EUR_COUNTRIES.forEach(countryCode => {
+                countryToCurrency[countryCode] = currency.code;
+            });
+        } else {
+            const countryCode = COUNTRY_CODES[currency.country];
+            if (countryCode) {
+                countryToCurrency[countryCode] = currency.code;
+            }
+        }
+    });
+
     // Load world map data and create the globe
     d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
         .then(function(world) {
@@ -36,32 +51,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 .enter().append('path')
                 .attr('d', path)
                 .attr('fill', d => {
-                    // Check for Eurozone countries
-                    const isEuroCountry = EUR_COUNTRIES.includes(d.id);
-                    if (isEuroCountry) {
-                        // If it's a Eurozone country and we have EUR in our data
-                        const hasEuro = CURRENCY_DATA.some(currency => currency.code === 'EUR');
-                        return hasEuro ? '#2979ff' : '#1a1a1a';
-                    }
-
-                    // Check for other countries in our currency data
-                    const currencyMatch = CURRENCY_DATA.some(currency => {
-                        const countryCode = COUNTRY_CODES[currency.country];
-                        return countryCode === d.id;
-                    });
-
-                    return currencyMatch ? '#2979ff' : '#1a1a1a';
+                    return countryToCurrency[d.id] ? '#2979ff' : '#1a1a1a';
                 })
                 .attr('stroke', '#333')
                 .attr('stroke-width', '0.3')
                 .attr('opacity', d => {
-                    const isEuroCountry = EUR_COUNTRIES.includes(d.id);
-                    const currencyMatch = CURRENCY_DATA.some(currency => {
-                        if (isEuroCountry) return currency.code === 'EUR';
-                        const countryCode = COUNTRY_CODES[currency.country];
-                        return countryCode === d.id;
-                    });
-                    return currencyMatch ? 1 : 0.7;
+                    return countryToCurrency[d.id] ? 1 : 0.7;
                 });
 
             // Rotation behavior
@@ -86,7 +81,6 @@ document.addEventListener('DOMContentLoaded', function() {
             // Auto-rotation
             function rotate() {
                 const rotation = projection.rotate();
-                // Reduced rotation speed from 0.3 to 0.1
                 projection.rotate([rotation[0] + 0.1, rotation[1]]);
                 svg.selectAll('path').attr('d', path);
                 requestAnimationFrame(rotate);
