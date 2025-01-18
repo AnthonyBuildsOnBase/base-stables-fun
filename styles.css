@@ -17,14 +17,14 @@ body {
     font-weight: 600;
     font-size: 42px;
     color: #FFFFFF;
-    margin: 2rem 0 4rem 2rem;
+    margin: 1rem 0 0 2rem;
     text-align: left;
-    padding-top: 1rem;
+    padding-top: 2rem;
 }
 
 .globe-container {
-    margin-top: 2rem;
-    padding-top: 1rem;
+    margin-top: 4rem;  /* Increased margin for more space */
+    padding-top: 2rem; /* Added padding for more space */
     height: 500px;
 }
 

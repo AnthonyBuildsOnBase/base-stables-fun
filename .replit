@@ -5,7 +5,7 @@ channel = "stable-24_05"
 
 [deployment]
 deploymentTarget = "autoscale"
-run = ["sh", "-c", "python server.py"]
+run = ["sh", "-c", "node server.js"]
 
 [workflows]
 runButton = "Project"
@@ -17,10 +17,10 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "HTTP Server"
+args = "Express Server"
 
 [[workflows.workflow]]
-name = "HTTP Server"
+name = "Express Server"
 author = "agent"
 
 [workflows.workflow.metadata]
@@ -31,8 +31,8 @@ task = "packager.installForAll"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "python server.py"
-waitForPort = 8000
+args = "node server.js"
+waitForPort = 5000
 
 [[ports]]
 localPort = 3000
