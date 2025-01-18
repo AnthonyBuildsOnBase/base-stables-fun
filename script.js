@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const eurData = CURRENCY_DATA.find(c => c.country === 'Europe');
             if (eurData) {
                 info.push({
-                    country: 'Europe',
+                    country: 'European Union',
                     code: eurData.code,
                     digital: eurData.digital,
                     provider: eurData.provider,
