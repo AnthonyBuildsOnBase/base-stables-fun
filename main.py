@@ -74,14 +74,22 @@ st.markdown("""
         font-weight: 600;
         font-size: 42px;
         color: #FFFFFF !important;
-        margin: 1rem 0 3rem 1rem;
+        margin: 2rem 0 4rem 2rem;
         text-align: left;
+        padding-top: 1rem;
+    }
+    .globe-container {
+        margin-top: 2rem;
+        padding-top: 1rem;
     }
     </style>
 """, unsafe_allow_html=True)
 
 # Title with updated styling
 st.markdown('<h1 class="title" style="color: #FFFFFF !important;">Base International Stablecoins</h1>', unsafe_allow_html=True)
+
+# Add container div around globe
+st.markdown('<div class="globe-container">', unsafe_allow_html=True)
 
 def create_globe():
     # Prepare data for active countries and hover text
@@ -159,6 +167,8 @@ st.plotly_chart(globe_fig, use_container_width=True, config={
     'frameMargins': 0,
     'displaylogo': False,
 })
+
+st.markdown('</div>', unsafe_allow_html=True)
 
 # Create and display the currency table below the globe
 st.markdown("<div class='table-container'>", unsafe_allow_html=True)
