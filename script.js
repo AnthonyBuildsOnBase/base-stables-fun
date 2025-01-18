@@ -9,6 +9,10 @@ document.addEventListener('DOMContentLoaded', function() {
         .attr('width', width)
         .attr('height', height);
 
+    // Create tooltip
+    const tooltip = d3.select('body').append('div')
+        .attr('class', 'tooltip');
+
     // Set up the globe projection
     const projection = d3.geoOrthographic()
         .scale(height / 2.1)
@@ -26,19 +30,19 @@ document.addEventListener('DOMContentLoaded', function() {
         .attr('cy', height / 2)
         .attr('r', initialScale);
 
+    let isHovered = false;
+
     // Function to determine if a country should be highlighted
     function shouldHighlightCountry(countryId) {
         // Check if it's a Euro country
         const isEuroCountry = EUR_COUNTRIES.includes(countryId);
         if (isEuroCountry) {
-            console.log('Euro country found:', countryId);
             return true;
         }
 
         // Check against COUNTRY_CODES
         for (const [country, code] of Object.entries(COUNTRY_CODES)) {
             if (code === countryId) {
-                console.log('Stablecoin country found:', country, code);
                 return true;
             }
         }
@@ -46,11 +50,40 @@ document.addEventListener('DOMContentLoaded', function() {
         return false;
     }
 
+    // Function to get stablecoin info for a country
+    function getStablecoinInfo(countryId) {
+        let info = [];
+
+        // Check if it's a Euro country
+        if (EUR_COUNTRIES.includes(countryId)) {
+            const eurData = CURRENCY_DATA.find(c => c.country === 'Europe');
+            if (eurData) {
+                info.push({
+                    country: 'Europe',
+                    code: eurData.code,
+                    digital: eurData.digital,
+                    provider: eurData.provider
+                });
+            }
+            return info;
+        }
+
+        // Check other countries
+        for (const [country, code] of Object.entries(COUNTRY_CODES)) {
+            if (code === countryId) {
+                const currencyData = CURRENCY_DATA.find(c => c.country === country);
+                if (currencyData) {
+                    info.push(currencyData);
+                }
+            }
+        }
+
+        return info;
+    }
+
     // Load world map data and create the globe
     d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
         .then(function(world) {
-            console.log('Loaded world data, processing countries...');
-
             // Draw countries
             const countries = svg.append('g');
             countries.selectAll('path')
@@ -59,12 +92,36 @@ document.addEventListener('DOMContentLoaded', function() {
                 .attr('d', path)
                 .attr('fill', d => {
                     const highlight = shouldHighlightCountry(d.id);
-                    console.log('Country:', d.id, 'Highlighted:', highlight);
                     return highlight ? '#0052FF' : '#1a1a1a';
                 })
                 .attr('stroke', '#333')
                 .attr('stroke-width', '0.3')
-                .attr('opacity', d => shouldHighlightCountry(d.id) ? 1 : 0.7);
+                .attr('opacity', d => shouldHighlightCountry(d.id) ? 1 : 0.7)
+                .on('mouseover', function(event, d) {
+                    const stablecoinInfo = getStablecoinInfo(d.id);
+                    if (stablecoinInfo.length > 0) {
+                        const tooltipContent = stablecoinInfo.map(info => `
+                            <h4>${info.country}</h4>
+                            <p>Currency: ${info.code}</p>
+                            <p>Digital: ${info.digital}</p>
+                            <p>Provider: ${info.provider}</p>
+                        `).join('');
+
+                        tooltip.style('display', 'block')
+                            .html(tooltipContent);
+                    }
+                })
+                .on('mousemove', function(event) {
+                    tooltip.style('left', (event.pageX + 10) + 'px')
+                           .style('top', (event.pageY + 10) + 'px');
+                })
+                .on('mouseout', function() {
+                    tooltip.style('display', 'none');
+                });
+
+            // Add hover detection for the entire globe
+            svg.on('mouseenter', () => { isHovered = true; })
+               .on('mouseleave', () => { isHovered = false; });
 
             // Rotation behavior
             let m0, o0;
@@ -87,9 +144,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Auto-rotation
             function rotate() {
-                const rotation = projection.rotate();
-                projection.rotate([rotation[0] + 0.1, rotation[1]]);
-                svg.selectAll('path').attr('d', path);
+                if (!isHovered) {
+                    const rotation = projection.rotate();
+                    projection.rotate([rotation[0] + 0.1, rotation[1]]);
+                    svg.selectAll('path').attr('d', path);
+                }
                 requestAnimationFrame(rotate);
             }
 
