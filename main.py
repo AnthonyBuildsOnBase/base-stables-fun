@@ -1,17 +1,4 @@
-import streamlit as st
-import plotly.graph_objects as go
-import pandas as pd
-from currency_data import CURRENCY_DATA, COUNTRY_CODES, EUR_COUNTRIES
-
-# Page configuration
-st.set_page_config(
-    page_title="Base International Stablecoins",
-    page_icon="🌍",
-    layout="wide"
-)
-
-# Update the CSS section with enhanced table styling
-st.markdown("""
+html
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
@@ -91,95 +78,17 @@ st.markdown('<h1 class="title" style="color: #FFFFFF !important;">Base Internati
 # Add container div around globe
 st.markdown('<div class="globe-container">', unsafe_allow_html=True)
 
-def create_globe():
-    # Prepare data for active countries and hover text
-    active_countries = []
-    hover_text = []
-    z_values = []
 
-    for currency in CURRENCY_DATA:
-        if currency['country'] == 'Europe':
-            for country_code in EUR_COUNTRIES:
-                active_countries.append(country_code)
-                hover_text.append(
-                    f"Region: Europe<br>"
-                    f"Currency: EUR<br>"
-                    f"Digital: {currency['digital']}<br>"
-                    f"Provider: {currency['provider']}"
-                )
-                z_values.append(1)
-        else:
-            if currency['country'] in COUNTRY_CODES:
-                active_countries.append(COUNTRY_CODES[currency['country']])
-                hover_text.append(
-                    f"Country: {currency['country']}<br>"
-                    f"Currency: {currency['code']}<br>"
-                    f"Digital: {currency['digital']}<br>"
-                    f"Provider: {currency['provider']}"
-                )
-                z_values.append(1)
+# Placeholder for globe visualization -  Python code removed
+st.markdown("<p>Globe visualization would go here.</p>", unsafe_allow_html=True)
 
-    # Create initial figure
-    fig = go.Figure()
-
-    # Add choropleth trace with updated colors and hover text
-    fig.add_trace(go.Choropleth(
-        locations=active_countries,
-        z=z_values,
-        text=hover_text,
-        hoverinfo='text',
-        colorscale=[[0, '#1E1E1E'], [1, '#0052FF']],  
-        showscale=False,
-    ))
-
-    # Update layout for globe projection
-    fig.update_geos(
-        projection_type='orthographic',
-        showcoastlines=True,
-        coastlinecolor='#FFFFFF',
-        showland=True,
-        landcolor='#1E1E1E',
-        showocean=True,
-        oceancolor='#000000',
-        showframe=False,
-        bgcolor='#000000'
-    )
-
-    # Update layout
-    fig.update_layout(
-        paper_bgcolor='#000000',
-        plot_bgcolor='#000000',
-        margin=dict(l=0, r=0, t=0, b=0),
-        height=500,  
-        geo=dict(
-            projection_rotation=dict(lon=0, lat=30, roll=0)
-        )
-    )
-
-    return fig
-
-# Display the globe
-globe_fig = create_globe()
-st.plotly_chart(globe_fig, use_container_width=True, config={
-    'displayModeBar': False,
-    'scrollZoom': False,
-    'showTips': False,
-    'frameMargins': 0,
-    'displaylogo': False,
-})
 
 st.markdown('</div>', unsafe_allow_html=True)
 
 # Create and display the currency table below the globe
 st.markdown("<div class='table-container'>", unsafe_allow_html=True)
-currency_df = pd.DataFrame(CURRENCY_DATA)
-styled_table = currency_df[['country', 'code', 'digital', 'provider']].rename(columns={
-    'country': 'Country',
-    'code': 'Currency',
-    'digital': 'Digital',
-    'provider': 'Provider'
-}).to_html(classes='styled-table', index=False, escape=False)
-st.markdown(styled_table, unsafe_allow_html=True)
+# Placeholder for currency table - Python code removed
+st.markdown("<p>Currency table would go here.</p>", unsafe_allow_html=True)
 st.markdown("</div>", unsafe_allow_html=True)
 
 # Add JavaScript for globe rotation with smooth easing effects
