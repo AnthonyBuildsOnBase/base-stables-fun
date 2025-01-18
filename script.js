@@ -40,10 +40,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     const countryMatch = Object.entries(COUNTRY_CODES).find(([country, code]) => 
                         code === d.id || (country === 'Europe' && EUR_COUNTRIES.includes(d.id))
                     );
-                    return countryMatch ? '#0052FF' : '#1a1a1a';
+                    // Use a brighter blue for countries with stablecoins
+                    return countryMatch ? '#2979ff' : '#1a1a1a';
                 })
                 .attr('stroke', '#333')
-                .attr('stroke-width', '0.3');
+                .attr('stroke-width', '0.3')
+                .attr('opacity', d => {
+                    const isEuroCountry = EUR_COUNTRIES.includes(d.id);
+                    const countryMatch = Object.entries(COUNTRY_CODES).find(([country, code]) => 
+                        code === d.id || (country === 'Europe' && isEuroCountry)
+                    );
+                    return countryMatch ? 1 : 0.7;
+                });
 
             // Rotation behavior
             let m0, o0;
@@ -67,7 +75,8 @@ document.addEventListener('DOMContentLoaded', function() {
             // Auto-rotation
             function rotate() {
                 const rotation = projection.rotate();
-                projection.rotate([rotation[0] + 0.3, rotation[1]]);
+                // Reduced rotation speed from 0.3 to 0.1
+                projection.rotate([rotation[0] + 0.1, rotation[1]]);
                 svg.selectAll('path').attr('d', path);
                 requestAnimationFrame(rotate);
             }
