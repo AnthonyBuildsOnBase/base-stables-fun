@@ -1,6 +1,7 @@
 import streamlit as st
 import plotly.express as px
 import pandas as pd
+import plotly.graph_objects as go #Added import for go.Frame
 from currency_data import CURRENCY_DATA, COUNTRY_CODES, EUR_COUNTRIES
 
 # Page configuration
@@ -74,6 +75,19 @@ def create_globe():
         labels={'has_digital_currency': 'Digital Currency Status'},
     )
 
+    # Create frames for rotation animation
+    frames = []
+    for rotation in range(0, 360, 6):  # 6-degree steps for smoother rotation
+        frames.append(go.Frame(
+            layout=dict(
+                geo=dict(
+                    projection_rotation=dict(lon=rotation, lat=30, roll=0)
+                )
+            )
+        ))
+
+    fig.frames = frames
+
     fig.update_layout(
         paper_bgcolor='black',
         plot_bgcolor='black',
@@ -87,10 +101,6 @@ def create_globe():
         margin=dict(l=0, r=0, t=0, b=0),
         coloraxis_showscale=False,
         height=600,
-    )
-
-    # Add rotation animation
-    fig.update_layout(
         updatemenus=[{
             'type': 'buttons',
             'showactive': False,
@@ -99,12 +109,57 @@ def create_globe():
                 'args': [None, {
                     'frame': {'duration': 50, 'redraw': True},
                     'fromcurrent': True,
-                    'transition': {'duration': 0}
+                    'transition': {'duration': 0},
+                    'mode': 'immediate',
                 }],
                 'label': '🌍 Rotate Globe'
-            }]
+            }],
+            'x': 0.1,
+            'y': 0,
+            'xanchor': 'right',
+            'yanchor': 'top'
         }]
     )
+
+    # Add autorotation using JavaScript
+    fig.update_layout(
+        autosize=True,
+        hovermode='closest',
+    )
+
+    # Add custom JavaScript for continuous rotation and hover interaction
+    js_code = """
+    <script>
+        const fig = document.querySelector('#chart');
+        let isRotating = true;
+        let animationId;
+
+        function rotateGlobe() {
+            if (isRotating) {
+                Plotly.animate('chart', null, {
+                    frame: {duration: 50, redraw: true},
+                    transition: {duration: 0},
+                    mode: 'immediate'
+                });
+                animationId = requestAnimationFrame(rotateGlobe);
+            }
+        }
+
+        fig.on('plotly_hover', function() {
+            isRotating = false;
+            cancelAnimationFrame(animationId);
+        });
+
+        fig.on('plotly_unhover', function() {
+            isRotating = true;
+            rotateGlobe();
+        });
+
+        rotateGlobe();
+    </script>
+    """
+
+    st.components.v1.html(js_code, height=0)
 
     return fig
 
