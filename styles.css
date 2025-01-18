@@ -24,7 +24,8 @@ body {
 
 .globe-container {
     margin-top: 2rem;
-    height: 500px;
+    width: 100%;
+    aspect-ratio: 1.5;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -33,7 +34,8 @@ body {
 
 @media screen and (max-width: 768px) {
     .globe-container {
-        height: 350px;  /* Reduced height for mobile */
+        aspect-ratio: 1;  /* More square aspect ratio on mobile */
+        margin: 1rem 0;   /* Reduced margins */
     }
 
     .title {

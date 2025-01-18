@@ -2,8 +2,10 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Set up SVG
     const width = document.querySelector('.globe-container').clientWidth;
-    const height = 500;
-    const sensitivity = 75;
+    const height = document.querySelector('.globe-container').clientHeight;
+    const isMobile = window.innerWidth <= 768;
+    const sensitivity = isMobile ? 150 : 75; // Higher sensitivity (slower drag) on mobile
+    const rotationSpeed = isMobile ? 0.05 : 0.1; // Slower rotation on mobile
 
     const svg = d3.select('#globe')
         .attr('width', width)
@@ -148,7 +150,7 @@ document.addEventListener('DOMContentLoaded', function() {
             function rotate() {
                 if (!isHovered) {
                     const rotation = projection.rotate();
-                    projection.rotate([rotation[0] + 0.1, rotation[1]]);
+                    projection.rotate([rotation[0] + rotationSpeed, rotation[1]]);
                     svg.selectAll('path').attr('d', path);
                 }
                 requestAnimationFrame(rotate);
@@ -163,9 +165,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Handle window resize
     window.addEventListener('resize', function() {
-        const newWidth = document.querySelector('.globe-container').clientWidth;
-        svg.attr('width', newWidth);
-        projection.translate([newWidth / 2, height / 2]);
+        const container = document.querySelector('.globe-container');
+        const newWidth = container.clientWidth;
+        const newHeight = container.clientHeight;
+        const newIsMobile = window.innerWidth <= 768;
+
+        svg.attr('width', newWidth)
+           .attr('height', newHeight);
+
+        projection
+            .scale(Math.min(newWidth, newHeight) / 2.1)
+            .translate([newWidth / 2, newHeight / 2]);
+
         svg.selectAll('path').attr('d', path);
     });
 });
