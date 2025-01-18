@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         const tooltipContent = stablecoinInfo.map(info => `
                             <h4>${info.country}</h4>
                             <p>Currency: ${info.code}</p>
-                            <p>Name: <a href="https://basescan.org/address/${info.contract}" target="_blank" style="color: #0052FF">${info.digital}</a></p>
+                            <p>Name: <a href="https://basescan.org/token/${info.contract}" target="_blank" style="color: #0052FF">${info.digital}</a></p>
                             <p>Issuer: <a href="${info.website}" target="_blank" style="color: #0052FF">${info.provider}</a></p>
                         `).join('');
 
@@ -185,7 +185,7 @@ function populateTable() {
         row.innerHTML = `
             <td>${currency.country}</td>
             <td>${currency.code}</td>
-            <td><a href="https://basescan.org/address/${currency.contract}" target="_blank" style="color: #0052FF">${currency.digital}</a></td>
+            <td><a href="https://basescan.org/token/${currency.contract}" target="_blank" style="color: #0052FF">${currency.digital}</a></td>
             <td><a href="${currency.website}" target="_blank" style="color: #0052FF">${currency.provider}</a></td>
         `;
         tableBody.appendChild(row);
