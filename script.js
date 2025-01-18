@@ -25,6 +25,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const path = d3.geoPath().projection(projection);
 
     let isHovered = false;
+    let hoverTimeout;
+
+    // Function to reset hover state
+    const resetHoverState = () => {
+        clearTimeout(hoverTimeout);
+        hoverTimeout = setTimeout(() => {
+            isHovered = false;
+            tooltip.style('display', 'none');
+        }, 2000); // Reset after 2 seconds of inactivity
+    };
 
     // Add background circle
     svg.append('circle')
@@ -35,7 +45,10 @@ document.addEventListener('DOMContentLoaded', function() {
         .attr('cy', height / 2)
         .attr('r', initialScale)
         .on('mouseenter', () => { isHovered = true; })
-        .on('mouseleave', () => { isHovered = false; });
+        .on('mouseleave', () => { 
+            isHovered = false;
+            resetHoverState();
+        });
 
     // Function to determine if a country should be highlighted
     function shouldHighlightCountry(countryId) {
@@ -104,9 +117,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 .attr('stroke', '#333')
                 .attr('stroke-width', '0.3')
                 .attr('opacity', d => shouldHighlightCountry(d.id) ? 1 : 0.7)
-                .on('mouseenter', () => { isHovered = true; })
-                .on('mouseleave', () => { isHovered = false; })
-                .on('mouseover', function(event, d) {
+                .on('mouseenter touchstart', () => { 
+                    isHovered = true; 
+                    clearTimeout(hoverTimeout);
+                })
+                .on('mouseleave touchend', () => { 
+                    resetHoverState();
+                })
+                .on('mouseover touchstart', function(event, d) {
                     const stablecoinInfo = getStablecoinInfo(d.id);
                     if (stablecoinInfo.length > 0) {
                         const tooltipContent = stablecoinInfo.map(info => `
@@ -118,14 +136,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
                         tooltip.style('display', 'block')
                                .html(tooltipContent);
+
+                        if (isMobile) {
+                            resetHoverState();
+                        }
                     }
                 })
-                .on('mousemove', function(event) {
-                    tooltip.style('left', (event.pageX + 10) + 'px')
-                           .style('top', (event.pageY + 10) + 'px');
+                .on('mousemove touchmove', function(event) {
+                    const coords = (event.touches && event.touches[0]) || event;
+                    tooltip.style('left', (coords.pageX + 10) + 'px')
+                           .style('top', (coords.pageY + 10) + 'px');
                 })
-                .on('mouseout', function() {
-                    tooltip.style('display', 'none');
+                .on('mouseout touchend', function() {
+                    resetHoverState();
                 });
 
             // Rotation behavior
