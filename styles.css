@@ -31,6 +31,16 @@ body {
     max-width: 800px; /* Limit width for better readability */
 }
 
+.subtitle a {
+    color: inherit; /* Use the same color as the subtitle text */
+    text-decoration: underline;
+    font-weight: 600;
+}
+
+.subtitle a:hover {
+    opacity: 0.8;
+}
+
 .globe-container {
     margin-top: 2rem;
     width: 100%;
