@@ -103,8 +103,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         const tooltipContent = stablecoinInfo.map(info => `
                             <h4>${info.country}</h4>
                             <p>Currency: ${info.code}</p>
-                            <p>Digital: ${info.digital}</p>
-                            <p>Provider: ${info.provider}</p>
+                            <p>Name: ${info.digital}</p>
+                            <p>Issuer: ${info.provider}</p>
                         `).join('');
 
                         tooltip.style('display', 'block')
