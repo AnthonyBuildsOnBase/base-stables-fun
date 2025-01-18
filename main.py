@@ -10,7 +10,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Custom CSS for dark theme following design guide
+# Update the CSS section with enhanced table styling
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
@@ -35,45 +35,53 @@ st.markdown("""
     .table-container {
         background: #1E1E1E;
         border-radius: 12px;
-        padding: 24px;
+        padding: 32px;
         margin-top: 20px;
-        transition: all 0.2s ease-in-out;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
     .table-container:hover {
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        transform: translateY(-2px);
     }
     .styled-table {
         width: 100%;
         border-collapse: separate;
-        border-spacing: 0 8px;
-        margin-top: 20px;
+        border-spacing: 0 12px;
+        margin: 0;
         font-family: 'Inter', sans-serif;
     }
     .styled-table th {
-        background-color: #1E1E1E;
-        color: #FFFFFF !important;
+        background-color: transparent;
+        color: #A0A0A0 !important;
         padding: 16px;
         text-align: left;
         font-weight: 600;
-        font-size: 14px;
-        letter-spacing: 0.05em;
+        font-size: 12px;
+        letter-spacing: 0.1em;
         text-transform: uppercase;
+        border-bottom: 1px solid #333333;
     }
     .styled-table td {
         background-color: #2D2D2D;
-        color: #F1F1F1 !important;
-        padding: 16px;
+        color: #FFFFFF !important;
+        padding: 20px 16px;
         font-size: 14px;
-        transition: all 0.2s ease-in-out;
+        font-weight: 400;
+        transition: all 0.2s ease;
+        line-height: 1.4;
     }
     .styled-table tr:hover td {
         background-color: #333333;
+        transform: scale(1.01);
     }
     .styled-table tr td:first-child {
         border-radius: 8px 0 0 8px;
+        font-weight: 500;
     }
     .styled-table tr td:last-child {
         border-radius: 0 8px 8px 0;
+        color: #F0F0F0 !important;
     }
     .title {
         font-family: 'Inter', sans-serif;
