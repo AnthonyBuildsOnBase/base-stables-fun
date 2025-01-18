@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         `).join('');
 
                         tooltip.style('display', 'block')
-                            .html(tooltipContent);
+                               .html(tooltipContent);
                     }
                 })
                 .on('mousemove', function(event) {
