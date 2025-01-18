@@ -81,14 +81,21 @@ function createGlobe() {
         globe.pointOfView({ lat: 39.6, lng: -98.5, altitude: 2.5 });
 
         // Auto-rotation
+        let currentLng = -98.5;
         let frame;
-        (function animate() {
-            frame = requestAnimationFrame(animate);
-            globe.rotation({
-                lat: globe.rotation().lat,
-                lng: (globe.rotation().lng + 0.3) % 360,
+
+        function animate() {
+            currentLng = (currentLng + 0.3) % 360;
+            globe.pointOfView({
+                lat: 39.6,
+                lng: currentLng,
+                altitude: 2.5
             });
-        })();
+            frame = requestAnimationFrame(animate);
+        }
+
+        // Start animation
+        animate();
 
         // Clean up on window unload
         window.addEventListener('unload', () => {
