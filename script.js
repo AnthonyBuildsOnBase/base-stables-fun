@@ -9,11 +9,6 @@ function createGlobe() {
             return;
         }
 
-        if (typeof Globe === 'undefined') {
-            console.error('Globe.gl library not loaded');
-            return;
-        }
-
         // Initialize globe with basic configuration
         const globe = Globe()
             .globeImageUrl('//unpkg.com/three-globe/example/img/earth-night.jpg')
