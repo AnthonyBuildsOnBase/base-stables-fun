@@ -6,18 +6,17 @@
     <title>Base International Stablecoins</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    <!-- Load data first -->
+    <!-- Load D3.js and related libraries -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://d3js.org/d3-geo.v3.min.js"></script>
+    <script src="https://d3js.org/topojson.v3.min.js"></script>
     <script src="data.js"></script>
-    <!-- Load Three.js from jsDelivr -->
-    <script src="https://cdn.jsdelivr.net/npm/three@0.129.0/build/three.min.js" onload="console.log('Three.js loaded')" onerror="console.error('Failed to load Three.js')"></script>
-    <!-- Load Globe.gl after Three.js -->
-    <script src="https://cdn.jsdelivr.net/npm/globe.gl@2.12.0/dist/globe.gl.min.js" onload="console.log('Globe.gl loaded')" onerror="console.error('Failed to load Globe.gl')"></script>
 </head>
 <body>
     <div class="container">
         <h1 class="title">Base International Stablecoins</h1>
         <div class="globe-container">
-            <div id="globe"></div>
+            <svg id="globe"></svg>
         </div>
         <div class="table-container">
             <table class="styled-table">
