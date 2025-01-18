@@ -72,10 +72,10 @@ st.markdown("""
     .title {
         font-family: 'Inter', sans-serif;
         font-weight: 600;
-        font-size: 32px;
+        font-size: 42px;
         color: #FFFFFF;
-        margin-bottom: 2rem;
-        text-align: center;
+        margin: 1rem 0 3rem 1rem;
+        text-align: left;
     }
     </style>
 """, unsafe_allow_html=True)
