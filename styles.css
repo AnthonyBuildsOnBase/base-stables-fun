@@ -117,6 +117,15 @@ body {
     font-weight: 500;
 }
 
+.styled-table td a {
+    color: #FFFFFF;
+    text-decoration: underline;
+}
+
+.styled-table td a:hover {
+    opacity: 0.8;
+}
+
 .tooltip {
     position: absolute;
     padding: 10px;
