@@ -32,6 +32,14 @@ const CURRENCY_DATA = [
         "website": "https://cngn.co/"
     },
     {
+        "code": "NGN",
+        "country": "Nigeria",
+        "digital": "NGNC",
+        "provider": "Link",
+        "contract": "0xA971B44246a55b3676ab2E66a4732Fa4cce2EA13",
+        "website": "https://www.linkio.world/ngnc"
+    },
+    {
         "code": "EUR",
         "country": "Europe",
         "digital": "EURC",
