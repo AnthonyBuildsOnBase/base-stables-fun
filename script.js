@@ -16,9 +16,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const tooltip = d3.select('body').append('div')
         .attr('class', 'tooltip');
 
-    // Set up the globe projection
+    // Set up the globe projection with reduced size
     const projection = d3.geoOrthographic()
-        .scale(height / 2.1)
+        .scale(height / 2.3)  // Reduced from 2.1 to 2.3 for 10% smaller size
         .translate([width / 2, height / 2]);
 
     const initialScale = projection.scale();
@@ -197,7 +197,7 @@ document.addEventListener('DOMContentLoaded', function() {
         svg.attr('width', newWidth)
            .attr('height', newHeight);
 
-        const newScale = Math.min(newWidth, newHeight) / 2.1;
+        const newScale = newHeight / 2.3;  // Updated scale factor here too
 
         projection
             .scale(newScale)
