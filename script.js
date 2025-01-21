@@ -197,9 +197,17 @@ document.addEventListener('DOMContentLoaded', function() {
         svg.attr('width', newWidth)
            .attr('height', newHeight);
 
+        const newScale = Math.min(newWidth, newHeight) / 2.1;
+
         projection
-            .scale(Math.min(newWidth, newHeight) / 2.1)
+            .scale(newScale)
             .translate([newWidth / 2, newHeight / 2]);
+
+        // Update the background circle position and size
+        svg.select('circle')
+           .attr('cx', newWidth / 2)
+           .attr('cy', newHeight / 2)
+           .attr('r', newScale);
 
         svg.selectAll('path').attr('d', path);
     });
