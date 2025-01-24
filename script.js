@@ -4,9 +4,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const width = document.querySelector('.globe-container').clientWidth;
     const height = document.querySelector('.globe-container').clientHeight;
     const isMobile = window.innerWidth <= 768;
-    const sensitivity = isMobile ? 150 : 75; // Higher sensitivity (slower drag) on mobile
-    const rotationSpeed = 0.2; // Increased base rotation speed
-    const mobileRotationMultiplier = isMobile ? 2 : 1; // Double speed on mobile
+    const sensitivity = isMobile ? 150 : 75;
+    const rotationSpeed = 0.2;
+    const mobileRotationMultiplier = isMobile ? 2 : 1;
 
     const svg = d3.select('#globe')
         .attr('width', width)
@@ -16,9 +16,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const tooltip = d3.select('body').append('div')
         .attr('class', 'tooltip');
 
-    // Set up the globe projection with reduced size
+    // Set up the globe projection
     const projection = d3.geoOrthographic()
-        .scale(height / 2.3)  // Reduced from 2.1 to 2.3 for 10% smaller size
+        .scale(height / 2.3)
         .translate([width / 2, height / 2]);
 
     const initialScale = projection.scale();
@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
         hoverTimeout = setTimeout(() => {
             isHovered = false;
             tooltip.style('display', 'none');
-        }, 2000); // Reset after 2 seconds of inactivity
+        }, 2000);
     };
 
     // Add background circle
@@ -43,15 +43,12 @@ document.addEventListener('DOMContentLoaded', function() {
         .attr('stroke-width', '0.2')
         .attr('cx', width / 2)
         .attr('cy', height / 2)
-        .attr('r', initialScale)
-        .on('mouseenter', () => { isHovered = true; })
-        .on('mouseleave', () => { 
-            isHovered = false;
-            resetHoverState();
-        });
+        .attr('r', initialScale);
 
     // Function to determine if a country should be highlighted
     function shouldHighlightCountry(countryId) {
+        if (!countryId) return false;
+
         // Check if it's a Euro country
         const isEuroCountry = EUR_COUNTRIES.includes(countryId);
         if (isEuroCountry) {
@@ -59,17 +56,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Check against COUNTRY_CODES
-        for (const [country, code] of Object.entries(COUNTRY_CODES)) {
-            if (code === countryId) {
-                return true;
-            }
-        }
-
-        return false;
+        return Object.values(COUNTRY_CODES).includes(countryId);
     }
 
     // Function to get stablecoin info for a country
     function getStablecoinInfo(countryId) {
+        if (!countryId) return [];
+
         let info = [];
 
         // Check if it's a Euro country
@@ -101,29 +94,34 @@ document.addEventListener('DOMContentLoaded', function() {
         return info;
     }
 
-    // Load world map data and create the globe
-    d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
+    // Load world map data with better error handling
+    fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(function(world) {
+            if (!world || !world.objects || !world.objects.countries) {
+                throw new Error('Invalid world map data format');
+            }
+
             // Draw countries
             const countries = svg.append('g');
             countries.selectAll('path')
                 .data(topojson.feature(world, world.objects.countries).features)
                 .enter().append('path')
                 .attr('d', path)
-                .attr('fill', d => {
-                    const highlight = shouldHighlightCountry(d.id);
-                    return highlight ? '#0052FF' : '#1a1a1a';
-                })
+                .attr('fill', d => shouldHighlightCountry(d.id) ? '#0052FF' : '#1a1a1a')
                 .attr('stroke', '#333')
                 .attr('stroke-width', '0.3')
                 .attr('opacity', d => shouldHighlightCountry(d.id) ? 1 : 0.7)
-                .on('mouseenter touchstart', () => { 
-                    isHovered = true; 
+                .on('mouseenter touchstart', function() {
+                    isHovered = true;
                     clearTimeout(hoverTimeout);
                 })
-                .on('mouseleave touchend', () => { 
-                    resetHoverState();
-                })
+                .on('mouseleave touchend', resetHoverState)
                 .on('mouseover touchstart', function(event, d) {
                     const stablecoinInfo = getStablecoinInfo(d.id);
                     if (stablecoinInfo.length > 0) {
@@ -147,9 +145,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     tooltip.style('left', (coords.pageX + 10) + 'px')
                            .style('top', (coords.pageY + 10) + 'px');
                 })
-                .on('mouseout touchend', function() {
-                    resetHoverState();
-                });
+                .on('mouseout touchend', resetHoverState);
 
             // Rotation behavior
             let m0, o0;
@@ -164,7 +160,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (m0) {
                         const m1 = [event.x, event.y];
                         const o1 = [o0[0] + (m1[0] - m0[0]) / sensitivity,
-                                      o0[1] + (m1[1] - m0[1]) / sensitivity];
+                                  o0[1] + (m1[1] - m0[1]) / sensitivity];
                         projection.rotate([-o1[0], -o1[1]]);
                         svg.selectAll('path').attr('d', path);
                     }
@@ -184,7 +180,14 @@ document.addEventListener('DOMContentLoaded', function() {
             rotate();
         })
         .catch(function(error) {
-            console.error('Error loading world map data:', error);
+            console.error('Error loading world map data:', error.message);
+            // Add a visible error message to the page
+            svg.append('text')
+                .attr('x', width / 2)
+                .attr('y', height / 2)
+                .attr('text-anchor', 'middle')
+                .attr('fill', '#666')
+                .text('Error loading map data. Please refresh the page.');
         });
 
     // Handle window resize
@@ -192,18 +195,16 @@ document.addEventListener('DOMContentLoaded', function() {
         const container = document.querySelector('.globe-container');
         const newWidth = container.clientWidth;
         const newHeight = container.clientHeight;
-        const newIsMobile = window.innerWidth <= 768;
 
         svg.attr('width', newWidth)
            .attr('height', newHeight);
 
-        const newScale = newHeight / 2.3;  // Updated scale factor here too
+        const newScale = newHeight / 2.3;
 
         projection
             .scale(newScale)
             .translate([newWidth / 2, newHeight / 2]);
 
-        // Update the background circle position and size
         svg.select('circle')
            .attr('cx', newWidth / 2)
            .attr('cy', newHeight / 2)
