@@ -32,9 +32,14 @@ body {
 }
 
 .subtitle a {
-    color: inherit; /* Use the same color as the subtitle text */
+    color: #FFFFFF;
     text-decoration: underline;
-    font-weight: 600;
+    font-weight: 400;
+}
+
+.subtitle .muted-link {
+    color: #666666;
+    text-decoration: underline;
 }
 
 .subtitle a:hover {
