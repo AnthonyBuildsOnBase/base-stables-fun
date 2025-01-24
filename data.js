@@ -2,6 +2,14 @@ const CURRENCY_DATA = [
     {
         code: "MXN",
         country: "Mexico",
+        digital: "MXNe",
+        provider: "Etherfuse",
+        contract: "0x269caE7Dc59803e5C596c95756faEeBb6030E0aF",
+        website: "https://brale.xyz/stablecoins/MXNe",
+    },
+    {
+        code: "MXN",
+        country: "Mexico",
         digital: "XOC",
         provider: "Xocolatl",
         contract: "0xa411c9Aa00E020e4f88Bc19996d29c5B7ADB4ACf",
@@ -26,7 +34,7 @@ const CURRENCY_DATA = [
     {
         code: "NGN",
         country: "Nigeria",
-        digital: "CNGN",
+        digital: "cNGN",
         provider: "Convexity",
         contract: "0xC930784d6e14e2FC2A1F49BE1068dc40f24762D3",
         website: "https://cngn.co/",
@@ -48,6 +56,38 @@ const CURRENCY_DATA = [
         website: "https://www.circle.com/eurc",
     },
     {
+        code: "BRL",
+        country: "Brazil",
+        digital: "NBRL",
+        provider: "Numun.fi",
+        contract: "0x9E087E2Ad52D2494Ff930553C20Ed64F23a2fd20",
+        website: "https://numun.fi/",
+    },
+    {
+        code: "CLP",
+        country: "Chile",
+        digital: "CLPD",
+        provider: "a0x",
+        contract: "0x24460D2b3d96ee5Ce87EE401b1cf2FD01545d9b1",
+        website: "https://clpd.a0x.co/",
+    },
+    {
+        code: "ARS",
+        country: "Argentina",
+        digital: "NARS",
+        provider: "Numun.fi",
+        contract: "0x5e40f26E89213660514c51Fb61b2d357DBf63C85",
+        website: "https://numun.fi/",
+    },
+    {
+        code: "UGX",
+        country: "Uganda",
+        digital: "Nuzo",
+        provider: "Nuzo",
+        contract: "0x92fb0552b5bcdc384de363b0aff114bbf8e5ec1a",
+        website: "https://www.nuzo.co/home/",
+    },
+    {
         code: "USD",
         country: "US",
         digital: "USDC",
@@ -63,6 +103,10 @@ const COUNTRY_CODES = {
     Indonesia: "360",
     Nigeria: "566",
     US: "840",
+    Brazil: "076",
+    Chile: "152",
+    Argentina: "032",
+    Uganda: "800"
 };
 
 // Only European Union member states
