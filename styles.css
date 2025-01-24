@@ -26,14 +26,32 @@ body {
     font-weight: 400;
     font-size: 16px;
     color: #666666;
-    margin: 0.5rem 0 1.5rem 2rem; /* Match title's left margin */
+    margin: 0.5rem 0 0 2rem;
     text-align: left;
-    max-width: 800px; /* Limit width for better readability */
+    max-width: 800px;
 }
 
-.subtitle a {
-    color: inherit; /* Use the same color as the subtitle text */
+.subtitle.goal-link {
+    font-size: 18px;
+    margin-bottom: 0.25rem;
+}
+
+.subtitle.goal-link a {
+    text-decoration: none;
+    color: #666666;
+}
+
+.subtitle.goal-link .underline-text {
     text-decoration: underline;
+}
+
+.subtitle.message {
+    margin-top: 0.25rem;
+}
+
+.subtitle.message a {
+    text-decoration: underline;
+    color: #666666;
     font-weight: 600;
 }
 
@@ -53,18 +71,22 @@ body {
 
 @media screen and (max-width: 768px) {
     .globe-container {
-        aspect-ratio: 1;  /* More square aspect ratio on mobile */
-        margin: 1rem 0;   /* Reduced margins */
+        aspect-ratio: 1;
+        margin: 1rem 0;
     }
 
     .title {
-        font-size: 32px;  /* Slightly smaller title for mobile */
+        font-size: 32px;
         margin: 0.5rem 0 0 1rem;
     }
 
     .subtitle {
-        margin: 0.5rem 0 1rem 1rem;
+        margin: 0.5rem 0 0 1rem;
         font-size: 14px;
+    }
+
+    .subtitle.goal-link {
+        font-size: 16px;
     }
 }
 
